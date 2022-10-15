@@ -104,7 +104,7 @@ const ExamManage = () => {
                     .map(
                       () =>
                         questions[
-                          Math.ceil(Math.random() * questions.length - 1)
+                          Math.floor(Math.random() * (questions.length - 1))
                         ]?.id
                     ),
                 },

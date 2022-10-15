@@ -1,28 +1,67 @@
-import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 
 import CountDown from "../components/CountDown";
 import { db } from "../firebase";
 import useWindowSize from "../hooks/useWindowSize";
 import "../styles/home.css";
 
-const kq = ["A", "B", "C", "D"];
+export const kqOptions = {
+  dapana: "A",
+  dapanb: "B",
+  dapanc: "C",
+  dapand: "D",
+};
 
-const rel = Array.from({ length: 20 })
-  .fill(null)
-  .map((_, i) => ({
-    no: i + 1,
-    rel: kq[Math.round(Math.random() * 4)],
-  }));
+const initQuestions = JSON.parse(localStorage.getItem("exams"));
 
 const Home = () => {
   const { width } = useWindowSize();
   const [isInContest, setIsInContest] = useState(true);
-  const Router = useNavigate();
   const [account, setAccount] = useState(
     JSON.parse(localStorage.getItem("account"))
   );
+  const currentIdQuestion = useRef(null);
+  const [submit, setSubmit] = useState({
+    isSubmitted: false,
+    answerSubmitted: null,
+  });
+  const Router = useNavigate();
+
+  const [questionExam, setQuestionExam] = useState(initQuestions);
+  const [questionsIndex, setQuestionIndex] = useState(1);
+
+  const [answer, setAnswer] = useState(null);
+
+  const handleSubmitAnswer = async () => {
+    const ref = doc(db, "result_test_1", currentIdQuestion.current || uuidv4());
+    await setDoc(ref, {
+      userId: account?.id,
+      username: account?.ten,
+      taikhoan: account?.taikhoan,
+      questionId: questionExam[questionsIndex]?.id,
+      user_answer: answer,
+    });
+    setSubmit({
+      answerSubmitted: answer,
+      isSubmitted: true,
+    });
+    toast.success("Chọn đáp án thành công !", {
+      autoClose: 1000,
+    });
+  };
 
   useEffect(() => {
     const q = query(collection(db, "contest"));
@@ -32,6 +71,36 @@ const Home = () => {
     return () => {
       unsubscribe();
     };
+  }, []);
+
+  // chon de
+  useEffect(() => {
+    (async () => {
+      if (!localStorage.getItem("exams")) {
+        const querySnapshot = await getDocs(collection(db, "examsQ"));
+        const queryData = querySnapshot.docs.map((d) => d.data());
+        if (queryData.length > 0) {
+          const selected =
+            queryData[Math.floor(Math.random() * (queryData.length - 1))];
+
+          const questions = await Promise.all(
+            selected.ids.map((id) => {
+              const ref = doc(db, "questions", id);
+              return getDoc(ref);
+            })
+          );
+
+          const last_data = questions.map((q) => ({
+            ...q.data(),
+            id: q.id,
+          }));
+
+          localStorage.setItem("exams", JSON.stringify(last_data));
+
+          setQuestionExam(last_data);
+        }
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -154,7 +223,7 @@ const Home = () => {
                             marginTop: "1rem",
                           }}
                         >
-                          <CountDown />
+                          <CountDown answer={answer} submit={submit} />
                         </div>
                         <div
                           className="px-3 text-white "
@@ -165,37 +234,87 @@ const Home = () => {
                           }}
                         >
                           <div className="py-2 h5">
+                            {submit.answerSubmitted && (
+                              <p className="mb-1">
+                                {" "}
+                                <b
+                                  className="text-warning"
+                                  style={{
+                                    fontSize: 18,
+                                  }}
+                                >
+                                  Đã chọn đáp án :{" "}
+                                  {kqOptions[submit.answerSubmitted]}
+                                </b>
+                              </p>
+                            )}
                             <b
                               style={{
                                 fontSize: 18,
                               }}
                             >
-                              Q. which option best describes your job role?
+                              Câu{" "}
+                              {questionsIndex +
+                                "/" +
+                                questionExam?.length +
+                                " :  "}{" "}
+                              {questionExam[questionsIndex]?.cauhoi}
                             </b>
 
                             <div className="mt-3">
                               <label className="options">
-                                Small Business Owner or Employee
-                                <input type="radio" name="radio" />
+                                A. {questionExam[questionsIndex]?.dapana}
+                                <input
+                                  type="radio"
+                                  value="dapana"
+                                  onChange={(e) => {
+                                    setAnswer(e.target.value);
+                                  }}
+                                  name="radio"
+                                />
                                 <span className="checkmark"></span>
                               </label>
                               <label className="options">
-                                Nonprofit Owner
-                                <input type="radio" name="radio" />
+                                B. {questionExam[questionsIndex]?.dapanb}
+                                <input
+                                  type="radio"
+                                  value="dapanb"
+                                  onChange={(e) => {
+                                    setAnswer(e.target.value);
+                                  }}
+                                  name="radio"
+                                />
                                 <span className="checkmark"></span>
                               </label>
                               <label className="options">
-                                Journalist or Activist
-                                <input type="radio" name="radio" />
+                                C. {questionExam[questionsIndex]?.dapanc}
+                                <input
+                                  type="radio"
+                                  value="dapanc"
+                                  onChange={(e) => {
+                                    setAnswer(e.target.value);
+                                  }}
+                                  name="radio"
+                                />
                                 <span className="checkmark"></span>
                               </label>
                               <label className="options">
-                                Other
-                                <input type="radio" name="radio" />
+                                D. {questionExam[questionsIndex]?.dapand}
+                                <input
+                                  value="dapand"
+                                  type="radio"
+                                  onChange={(e) => {
+                                    setAnswer(e.target.value);
+                                  }}
+                                  name="radio"
+                                />
                                 <span className="checkmark"></span>
                               </label>
 
-                              <button className="btn w-100 btn-primary mt-2">
+                              <button
+                                onClick={handleSubmitAnswer}
+                                className="btn w-100 btn-primary mt-2"
+                              >
                                 Xác nhận
                               </button>
                             </div>
@@ -215,9 +334,9 @@ const Home = () => {
                     }}
                   >
                     <p className="mb-1">
-                      <b>Kết quả tạm thời</b>
+                      <b>Đáp án đã chọn</b>
                     </p>
-                    <div
+                    {/* <div
                       style={{
                         display: "flex",
                         flexWrap: "wrap",
@@ -250,7 +369,7 @@ const Home = () => {
                           </span>
                         </span>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>

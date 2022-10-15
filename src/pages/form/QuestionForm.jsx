@@ -12,7 +12,7 @@ const INIT_DATA = {
   dapandung: "",
 };
 
-const OPTIONS = ["A", "B", "C", "D"];
+const OPTIONS = ["dapana", "dapanb", "dapanc", "dapand"];
 
 const validate = Yup.object({
   cauhoi: Yup.string().required("Vui lòng nhập câu hỏi !"),

@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "./countdown.css";
 
-const CountDown = () => {
+const CountDown = ({ submit, answer }) => {
   const [count, setCount] = useState(30);
 
   useEffect(() => {
+    if (count === 0) {
+      if (submit.isSubmitted) {
+        return;
+      }
+    }
     const timer = setTimeout(() => {
       setCount((c) => c - 1);
     }, 1000);
+
     return () => {
       clearTimeout(timer);
     };

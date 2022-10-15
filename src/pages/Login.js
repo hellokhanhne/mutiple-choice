@@ -17,7 +17,13 @@ const Login = () => {
     const q = query(collection(db, "users"), where("taikhoan", "==", account));
     const snaps = await getDocs(q);
     if (snaps.docs.length > 0) {
-      localStorage.setItem("account", JSON.stringify(snaps.docs[0].data()));
+      localStorage.setItem(
+        "account",
+        JSON.stringify({
+          ...snaps.docs[0].data(),
+          id: snaps.docs[0].id,
+        })
+      );
       return Router("/");
     }
   };
