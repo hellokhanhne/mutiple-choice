@@ -98,7 +98,7 @@ const Home = () => {
                       style={{
                         backgroundColor: " rgb(85, 85, 85)",
                       }}
-                      className="badge bg-primary  text-wrap py-3 px-3 mb-4"
+                      className="badge bg-primary  text-wrap py-2 px-3 mb-3"
                     >
                       <h4 className="mb-0">Hệ thống trắc nghiệm online</h4>
                     </div>
@@ -110,7 +110,7 @@ const Home = () => {
                     >
                       <h5
                         style={{
-                          fontSize: 18,
+                          fontSize: 16,
                         }}
                         className="mb-0"
                       >
@@ -119,7 +119,7 @@ const Home = () => {
                       </h5>
                       <h5
                         style={{
-                          fontSize: 18,
+                          fontSize: 16,
                         }}
                         className="mb-0"
                       >
@@ -151,14 +151,15 @@ const Home = () => {
                       <>
                         <div
                           style={{
-                            marginTop: "2rem",
+                            marginTop: "1rem",
                           }}
                         >
                           <CountDown />
                         </div>
                         <div
-                          className="px-3 text-white mt-5"
+                          className="px-3 text-white "
                           style={{
+                            marginTop: "1rem",
                             borderRadius: 7,
                             backgroundColor: "#555",
                           }}
