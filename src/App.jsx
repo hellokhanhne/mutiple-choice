@@ -6,6 +6,7 @@ import Admin from "./pages/Admin";
 import Home from "./pages/Home";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HomeWrapper from "./pages/HomeWrapper";
 
 function App() {
   return (
@@ -16,8 +17,22 @@ function App() {
           <Route path="/admin/login" element={<LoginAdmin />} />
 
           <Route path="/admin" element={<Admin />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/home"
+            element={
+              <HomeWrapper>
+                <Home />
+              </HomeWrapper>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <HomeWrapper>
+                <Home />
+              </HomeWrapper>
+            }
+          />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

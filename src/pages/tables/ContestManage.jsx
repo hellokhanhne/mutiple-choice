@@ -1,6 +1,33 @@
-import React from "react";
+import { collection, doc, onSnapshot, query, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase";
 
 const ContestManage = () => {
+  const [isInContest, setIsInContest] = useState(false);
+
+  const handleStart = async () => {
+    const ref = doc(db, "contest", "infomation");
+    await setDoc(ref, {
+      isInContest: true,
+    });
+  };
+
+  const handleFinish = async () => {
+    const ref = doc(db, "contest", "infomation");
+    await setDoc(ref, {
+      isInContest: false,
+    });
+  };
+
+  useEffect(() => {
+    const q = query(collection(db, "contest"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setIsInContest(querySnapshot.docs[0].data().isInContest);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
   return (
     <div>
       <div
@@ -10,11 +37,24 @@ const ContestManage = () => {
           textAlign: "center",
         }}
       >
-        <button className="btn btn-primary mb-5">BẮT ĐẦU CUỘC THI</button>
+        <button
+          onClick={() => handleStart()}
+          disabled={isInContest}
+          className="btn btn-primary mb-5 me-4"
+        >
+          BẮT ĐẦU CUỘC THI
+        </button>
+        <button
+          onClick={() => handleFinish()}
+          disabled={!isInContest}
+          className="btn btn-danger mb-5"
+        >
+          DỪNG CUỘC THI
+        </button>
         <div>
           <h1 className="text-success mb-5">CUỘC THI ĐANG ĐƯỢC DIỄN RA ...</h1>
-          <h3 className="text-secondary mb-5">Câu hiện tại : 7</h3>
-          <div className="d-flex">
+          {/* <h3 className="text-secondary mb-5">Câu hiện tại : 7</h3> */}
+          {/* <div className="d-flex">
             <div
               className="d-flex justify-content-center align-items-center m-auto    "
               style={{
@@ -26,7 +66,7 @@ const ContestManage = () => {
             >
               <h1 className="text-secondary">27</h1>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -7,9 +7,7 @@ import {
   query,
   setDoc,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
@@ -29,31 +27,57 @@ const initQuestions = JSON.parse(localStorage.getItem("exams"));
 
 const Home = () => {
   const { width } = useWindowSize();
-  const [isInContest, setIsInContest] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [isInContest, setIsInContest] = useState(false);
+  const [results, setResults] = useState([]);
+  const [kq, setKq] = useState(null);
   const [account, setAccount] = useState(
     JSON.parse(localStorage.getItem("account"))
   );
-  const currentIdQuestion = useRef(null);
+  const currenntResultId = useRef(null);
   const [submit, setSubmit] = useState({
     isSubmitted: false,
     answerSubmitted: null,
   });
-  const Router = useNavigate();
 
   const [questionExam, setQuestionExam] = useState(initQuestions);
-  const [questionsIndex, setQuestionIndex] = useState(1);
+
+  const [questionsIndex, setQuestionIndex] = useState(results.length || 0);
 
   const [answer, setAnswer] = useState(null);
 
   const handleSubmitAnswer = async () => {
-    const ref = doc(db, "result_test_1", currentIdQuestion.current || uuidv4());
+    let newResult = [...results];
+    const checkExistQue = results.find(
+      (r) => r.id === currenntResultId.current
+    );
+
+    if (checkExistQue) {
+      newResult = newResult.filter((n) => n.id !== currenntResultId.current);
+    }
+
+    const id = uuidv4();
+    currenntResultId.current = id;
+
+    const ref = doc(db, `result_test_1`, account?.id);
+
     await setDoc(ref, {
       userId: account?.id,
       username: account?.ten,
       taikhoan: account?.taikhoan,
-      questionId: questionExam[questionsIndex]?.id,
-      user_answer: answer,
+      results: [
+        ...newResult,
+        {
+          questionId: questionExam[questionsIndex]?.id,
+          user_answer: answer,
+          id,
+          index: questionsIndex,
+        },
+      ],
     });
+
+    localStorage.setItem("questionsIndex", questionsIndex);
+
     setSubmit({
       answerSubmitted: answer,
       isSubmitted: true,
@@ -63,11 +87,33 @@ const Home = () => {
     });
   };
 
+  const handleResetCurrentId = () => {
+    currenntResultId.current = null;
+  };
+
   useEffect(() => {
     const q = query(collection(db, "contest"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      // setIsInContest(querySnapshot.docs[0].data().isInContest);
+      setIsInContest(querySnapshot.docs[0].data().isInContest);
     });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      doc(db, "result_test_1", account?.id),
+      (doc) => {
+        const data = [...(doc.data()?.results || [])];
+        if (data.length > 0) {
+          data.sort((s1, s2) => s1.index - s2.index);
+        }
+        setQuestionIndex(data.length);
+        setResults(data);
+        setLoading(false);
+      }
+    );
     return () => {
       unsubscribe();
     };
@@ -104,13 +150,44 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem("account")) {
-      Router("/login");
+    if (questionsIndex === 20) {
+      // caculate result
+      const totalTrueRel = results.reduce((prev, cur) => {
+        const q = questionExam.find((d) => d.id === q.questionId);
+        if (cur.user_answer === q.dapandung) {
+          return prev + 1;
+        }
+        return prev;
+      }, 0);
+
+      setKq({
+        diem: totalTrueRel,
+      });
     }
-  }, []);
+  }, [questionsIndex]);
 
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            inset: "0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 99999,
+            backgroundColor: "rgba(0,0,0,.3)",
+          }}
+        >
+          <img
+            src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
+            width={110}
+            height={110}
+            alt=""
+          />
+        </div>
+      )}
       {localStorage.getItem("account") ? (
         <>
           <div className="body-login">
@@ -216,14 +293,26 @@ const Home = () => {
                         />
                       </div>
                     )}
-                    {isInContest && (
+                    {isInContest && !loading && questionsIndex < 20 && (
                       <>
                         <div
                           style={{
                             marginTop: "1rem",
                           }}
                         >
-                          <CountDown answer={answer} submit={submit} />
+                          <CountDown
+                            results={results}
+                            handleResetCurrentId={handleResetCurrentId}
+                            setAnswer={setAnswer}
+                            setQuestionIndex={setQuestionIndex}
+                            questionsIndex={questionsIndex}
+                            answer={answer}
+                            submit={submit}
+                            setSubmit={setSubmit}
+                            account={account}
+                            currenntResultId={currenntResultId}
+                            questionId={questionExam[questionsIndex]?.id}
+                          />
                         </div>
                         <div
                           className="px-3 text-white "
@@ -255,6 +344,7 @@ const Home = () => {
                             >
                               Câu{" "}
                               {questionsIndex +
+                                1 +
                                 "/" +
                                 questionExam?.length +
                                 " :  "}{" "}
@@ -266,11 +356,12 @@ const Home = () => {
                                 A. {questionExam[questionsIndex]?.dapana}
                                 <input
                                   type="radio"
+                                  checked={answer === "dapana"}
                                   value="dapana"
                                   onChange={(e) => {
                                     setAnswer(e.target.value);
                                   }}
-                                  name="radio"
+                                  name="dapan"
                                 />
                                 <span className="checkmark"></span>
                               </label>
@@ -278,11 +369,12 @@ const Home = () => {
                                 B. {questionExam[questionsIndex]?.dapanb}
                                 <input
                                   type="radio"
+                                  checked={answer === "dapanb"}
                                   value="dapanb"
                                   onChange={(e) => {
                                     setAnswer(e.target.value);
                                   }}
-                                  name="radio"
+                                  name="dapan"
                                 />
                                 <span className="checkmark"></span>
                               </label>
@@ -290,11 +382,12 @@ const Home = () => {
                                 C. {questionExam[questionsIndex]?.dapanc}
                                 <input
                                   type="radio"
+                                  checked={answer === "dapanc"}
                                   value="dapanc"
                                   onChange={(e) => {
                                     setAnswer(e.target.value);
                                   }}
-                                  name="radio"
+                                  name="dapan"
                                 />
                                 <span className="checkmark"></span>
                               </label>
@@ -303,10 +396,11 @@ const Home = () => {
                                 <input
                                   value="dapand"
                                   type="radio"
+                                  checked={answer === "dapand"}
                                   onChange={(e) => {
                                     setAnswer(e.target.value);
                                   }}
-                                  name="radio"
+                                  name="dapan"
                                 />
                                 <span className="checkmark"></span>
                               </label>
@@ -336,15 +430,15 @@ const Home = () => {
                     <p className="mb-1">
                       <b>Đáp án đã chọn</b>
                     </p>
-                    {/* <div
+                    <div
                       style={{
                         display: "flex",
                         flexWrap: "wrap",
                       }}
                     >
-                      {rel.map((r) => (
+                      {results.map((r) => (
                         <span
-                          key={r.no}
+                          key={r.index}
                           style={{
                             display: "block",
                             width: "20%",
@@ -357,7 +451,7 @@ const Home = () => {
                               width: 20,
                             }}
                           >
-                            {r.no}
+                            {r.index + 1}
                           </span>
                           {" : "}
                           <span
@@ -365,11 +459,11 @@ const Home = () => {
                               marginLeft: 5,
                             }}
                           >
-                            {r.rel || "_"}
+                            {kqOptions[r.user_answer] || "_"}
                           </span>
                         </span>
                       ))}
-                    </div> */}
+                    </div>
                   </div>
                 )}
               </div>
