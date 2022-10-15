@@ -1,7 +1,9 @@
+import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CountDown from "../components/CountDown";
+import { db } from "../firebase";
 import useWindowSize from "../hooks/useWindowSize";
 import "../styles/home.css";
 
@@ -21,6 +23,16 @@ const Home = () => {
   const [account, setAccount] = useState(
     JSON.parse(localStorage.getItem("account"))
   );
+
+  useEffect(() => {
+    const q = query(collection(db, "contest"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      // setIsInContest(querySnapshot.docs[0].data().isInContest);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("account")) {
@@ -88,21 +100,31 @@ const Home = () => {
                       }}
                       className="badge bg-primary  text-wrap py-3 px-3 mb-4"
                     >
-                      <h3 className="mb-0">Hệ thống trắc nghiệm online</h3>
+                      <h4 className="mb-0">Hệ thống trắc nghiệm online</h4>
                     </div>
                     <div
                       style={{
                         backgroundColor: " rgb(85, 85, 85)",
                       }}
-                      className="badge bg-danger  text-wrap py-3 px-3 text-start"
+                      className="badge bg-danger  text-wrap py-2 px-3 text-start"
                     >
-                      <h4 className="mb-1  ">
+                      <h5
+                        style={{
+                          fontSize: 18,
+                        }}
+                        className="mb-0"
+                      >
                         {" "}
                         <b>Tên thí sinh</b> : {account?.ten}
-                      </h4>
-                      <h4 className="mb-0">
+                      </h5>
+                      <h5
+                        style={{
+                          fontSize: 18,
+                        }}
+                        className="mb-0"
+                      >
                         <b>Đơn vị</b> : {account?.donvi}
-                      </h4>
+                      </h5>
                     </div>
                     {!isInContest && (
                       <div
