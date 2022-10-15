@@ -165,9 +165,15 @@ const Home = () => {
                           }}
                         >
                           <div className="py-2 h5">
-                            <b>Q. which option best describes your job role?</b>
+                            <b
+                              style={{
+                                fontSize: 18,
+                              }}
+                            >
+                              Q. which option best describes your job role?
+                            </b>
 
-                            <div className="mt-4">
+                            <div className="mt-3">
                               <label className="options">
                                 Small Business Owner or Employee
                                 <input type="radio" name="radio" />
