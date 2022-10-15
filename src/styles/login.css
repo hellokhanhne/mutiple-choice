@@ -1,0 +1,11 @@
+@import url("background.css");
+
+/* custom  */
+.main-form-login {
+  opacity: 1;
+}
+
+.main-form-login div {
+  opacity: 1;
+  position: relative;
+}
