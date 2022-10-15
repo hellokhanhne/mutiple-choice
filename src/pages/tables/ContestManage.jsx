@@ -6,6 +6,9 @@ const ContestManage = () => {
   const [isInContest, setIsInContest] = useState(false);
 
   const handleStart = async () => {
+    if (!window.confirm("Bạn có chắc chắn muốn bắt đầu trắc nghiệm !")) {
+      return;
+    }
     const ref = doc(db, "contest", "infomation");
     await setDoc(ref, {
       isInContest: true,
@@ -13,6 +16,9 @@ const ContestManage = () => {
   };
 
   const handleFinish = async () => {
+    if (!window.confirm("Bạn có chắc chắn muốn dừng trắc nghiệm !")) {
+      return;
+    }
     const ref = doc(db, "contest", "infomation");
     await setDoc(ref, {
       isInContest: false,
@@ -52,7 +58,11 @@ const ContestManage = () => {
           DỪNG CUỘC THI
         </button>
         <div>
-          <h1 className="text-success mb-5">CUỘC THI ĐANG ĐƯỢC DIỄN RA ...</h1>
+          {isInContest && (
+            <h1 className="text-success mb-5">
+              CUỘC THI ĐANG ĐƯỢC DIỄN RA ...
+            </h1>
+          )}
           {/* <h3 className="text-secondary mb-5">Câu hiện tại : 7</h3> */}
           {/* <div className="d-flex">
             <div

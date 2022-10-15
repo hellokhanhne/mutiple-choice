@@ -16,7 +16,7 @@ const CountDown = ({
   results,
   questionsIndex,
 }) => {
-  const [count, setCount] = useState(8);
+  const [count, setCount] = useState(4);
 
   useEffect(() => {
     if (count === 0) {
@@ -28,17 +28,18 @@ const CountDown = ({
         });
         setAnswer(null);
         setQuestionIndex((i) => i + 1);
-        setCount(8);
+        setCount(4);
         return;
       } else {
         const ref = doc(db, `result_test_1`, account?.id);
+        const newRel = results.filter((r) => r.index !== questionsIndex);
 
         setDoc(ref, {
           userId: account?.id,
           username: account?.ten,
           taikhoan: account?.taikhoan,
           results: [
-            ...results,
+            ...newRel,
             {
               questionId,
               user_answer: answer,
@@ -47,7 +48,7 @@ const CountDown = ({
             },
           ],
         }).then(() => {
-          localStorage.setItem("questionsIndex", questionsIndex);
+          localStorage.setItem("questionsIndex", questionsIndex + 1);
           handleResetCurrentId();
 
           setSubmit({

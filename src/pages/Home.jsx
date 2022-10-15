@@ -42,19 +42,23 @@ const Home = () => {
 
   const [questionExam, setQuestionExam] = useState(initQuestions);
 
-  const [questionsIndex, setQuestionIndex] = useState(results.length || 0);
+  const [questionsIndex, setQuestionIndex] = useState(
+    Number(localStorage.getItem("questionsIndex")) || 0
+  );
 
   const [answer, setAnswer] = useState(null);
 
   const handleSubmitAnswer = async () => {
     let newResult = [...results];
-    const checkExistQue = results.find(
-      (r) => r.id === currenntResultId.current
-    );
+    // const checkExistQue = results.find(
+    //   (r) => r.id === currenntResultId.current
+    // );
 
-    if (checkExistQue) {
-      newResult = newResult.filter((n) => n.id !== currenntResultId.current);
-    }
+    // if (checkExistQue) {
+    newResult = newResult.filter(
+      (n) => n.id !== currenntResultId.current && n.index !== questionsIndex
+    );
+    // }
 
     const id = uuidv4();
     currenntResultId.current = id;
@@ -76,7 +80,7 @@ const Home = () => {
       ],
     });
 
-    localStorage.setItem("questionsIndex", questionsIndex);
+    localStorage.setItem("questionsIndex", questionsIndex + 1);
 
     setSubmit({
       answerSubmitted: answer,
@@ -109,7 +113,7 @@ const Home = () => {
         if (data.length > 0) {
           data.sort((s1, s2) => s1.index - s2.index);
         }
-        setQuestionIndex(data.length);
+
         setResults(data);
         setLoading(false);
       }
@@ -150,10 +154,10 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (questionsIndex === 20) {
+    if (questionsIndex === 20 && results.length > 0) {
       // caculate result
       const totalTrueRel = results.reduce((prev, cur) => {
-        const q = questionExam.find((d) => d.id === q.questionId);
+        const q = questionExam.find((d) => d.id === cur.questionId);
         if (cur.user_answer === q.dapandung) {
           return prev + 1;
         }
@@ -164,7 +168,7 @@ const Home = () => {
         diem: totalTrueRel,
       });
     }
-  }, [questionsIndex]);
+  }, [questionsIndex, results]);
 
   return (
     <>
@@ -272,6 +276,22 @@ const Home = () => {
                         <b>Đơn vị</b> : {account?.donvi}
                       </h5>
                     </div>
+                    {/* kq  */}
+                    {kq?.diem && isInContest && (
+                      <div
+                        style={{
+                          backgroundColor: " rgb(85, 85, 85)",
+                        }}
+                        className="badge    text-wrap py-3 px-3 mt-5 text-center"
+                      >
+                        <h3 className="mb-2">
+                          Chúc mừng bạn đã hoàn thành bài trắc nghiệm !
+                        </h3>
+                        <h3>
+                          Số câu đúng <strong>{kq.diem} / 20</strong>
+                        </h3>
+                      </div>
+                    )}
                     {!isInContest && (
                       <div
                         style={{
