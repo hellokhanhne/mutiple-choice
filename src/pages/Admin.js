@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ContestManage from "./tables/ContestManage";
 import ExamManage from "./tables/ExamManage";
 import QuestionManage from "./tables/QuestionManage";
 import ResultManage from "./tables/ResultManage";
@@ -6,7 +7,7 @@ import UnitManage from "./tables/UnitManage";
 import UserManage from "./tables/UserManage";
 
 const Admin = () => {
-  const [active, setActive] = useState(5);
+  const [active, setActive] = useState(6);
   return (
     <div className=" w-100 px-4 py-4">
       <div>
@@ -19,6 +20,15 @@ const Admin = () => {
             marginTop: "2.25rem",
           }}
         >
+          <button
+            type="button"
+            onClick={() => setActive(6)}
+            className={`btn me-4 ${
+              active === 6 ? "btn-primary" : "btn-outline-primary"
+            }`}
+          >
+            Cuộc thi
+          </button>
           <button
             type="button"
             onClick={() => setActive(1)}
@@ -71,6 +81,7 @@ const Admin = () => {
           {active === 3 && <ResultManage />}
           {active === 4 && <UnitManage />}
           {active === 5 && <ExamManage />}
+          {active === 6 && <ContestManage />}
         </div>
       </div>
     </div>

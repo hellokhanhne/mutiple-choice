@@ -1,10 +1,32 @@
-import React from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db } from "../firebase";
+
 import bell from "../assets/bell.png";
 import useWindowSize from "../hooks/useWindowSize";
 import "../styles/login.css";
 
 const Login = () => {
   const { width } = useWindowSize();
+  const Router = useNavigate();
+
+  const [account, setAccount] = useState("");
+
+  const handleLogin = async () => {
+    const q = query(collection(db, "users"), where("taikhoan", "==", account));
+    const snaps = await getDocs(q);
+    if (snaps.docs.length > 0) {
+      localStorage.setItem("account", JSON.stringify(snaps.docs[0].data()));
+      return Router("/");
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("account")) {
+      Router("/");
+    }
+  }, []);
 
   return (
     <div className="body-login">
@@ -53,10 +75,14 @@ const Login = () => {
             {/* <label className="mb-2 fs-4 fw-bold ">Nhập tài khoản</label> */}
             <input
               type="text"
+              onChange={(e) => setAccount(e.target.value)}
+              value={account}
               className="form-control mb-4"
               placeholder="Nhập tài khoản của bạn"
             />
-            <button className="btn btn-primary w-100">Vào chơi</button>
+            <button className="btn btn-primary w-100" onClick={handleLogin}>
+              Vào chơi
+            </button>
           </div>
         </div>
       </div>
