@@ -187,7 +187,12 @@ const Home = () => {
             backgroundColor: "rgba(0,0,0,.3)",
           }}
         >
-          <img src={logo} width={110} height={110} alt="" />
+          <img
+            src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
+            width={110}
+            height={110}
+            alt=""
+          />
         </div>
       )}
       {localStorage.getItem("account") ? (
