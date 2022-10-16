@@ -21,7 +21,10 @@ const ResultManage = () => {
             ...doc.data(),
             id: doc.id,
             trueQuestionsNo: doc.data()?.results?.reduce((prev, cur) => {
-              if (cur.user_answer === q.dapandung) {
+              const dapan = questions.find(
+                (d) => d.id === cur.questionId
+              ).dapandung;
+              if (cur.user_answer === dapan) {
                 return prev + 1;
               }
               return prev;
