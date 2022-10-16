@@ -50,15 +50,10 @@ const Home = () => {
 
   const handleSubmitAnswer = async () => {
     let newResult = [...results];
-    // const checkExistQue = results.find(
-    //   (r) => r.id === currenntResultId.current
-    // );
 
-    // if (checkExistQue) {
     newResult = newResult.filter(
       (n) => n.id !== currenntResultId.current && n.index !== questionsIndex
     );
-    // }
 
     const id = uuidv4();
     currenntResultId.current = id;
@@ -69,6 +64,7 @@ const Home = () => {
       userId: account?.id,
       username: account?.ten,
       taikhoan: account?.taikhoan,
+      unit: account?.donvi,
       results: [
         ...newResult,
         {

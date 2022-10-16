@@ -16,7 +16,7 @@ const CountDown = ({
   results,
   questionsIndex,
 }) => {
-  const [count, setCount] = useState(4);
+  const [count, setCount] = useState(30);
 
   useEffect(() => {
     if (count === 0) {
@@ -28,7 +28,7 @@ const CountDown = ({
         });
         setAnswer(null);
         setQuestionIndex((i) => i + 1);
-        setCount(4);
+        setCount(30);
         return;
       } else {
         const ref = doc(db, `result_test_1`, account?.id);
@@ -45,6 +45,7 @@ const CountDown = ({
               user_answer: answer,
               id: uuidv4(),
               index: questionsIndex,
+              unit: account?.donvi,
             },
           ],
         }).then(() => {
@@ -57,7 +58,7 @@ const CountDown = ({
           });
           setAnswer(null);
           setQuestionIndex((i) => i + 1);
-          setCount(8);
+          setCount(30);
         });
         return;
       }
