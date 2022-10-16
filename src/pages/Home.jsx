@@ -142,15 +142,14 @@ const Home = () => {
           ...doc.data(),
           id: doc.id,
         }));
+
         const last_data = Array.from({ length: 20 })
           .fill(null)
           .map(
-            () =>
-              questions[Math.floor(Math.random() * (questions.length - 1))]?.id
+            () => questions[Math.floor(Math.random() * (questions.length - 1))]
           );
 
         localStorage.setItem("exams", JSON.stringify(last_data));
-
         setQuestionExam(last_data);
         // }
       }
