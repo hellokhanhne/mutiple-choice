@@ -35,6 +35,7 @@ const UserManageAttended = () => {
         }
       );
       setCheckInMark(checkInsArray);
+      arr.sort((a, b) => a.donvi.localeCompare(b.donvi));
       setUsers(arr);
     });
     return () => {
