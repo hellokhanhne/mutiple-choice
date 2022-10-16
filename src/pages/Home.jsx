@@ -281,7 +281,7 @@ const Home = () => {
                         className="badge    text-wrap py-3 px-3 mt-5 text-center"
                       >
                         <h3 className="mb-2">
-                          Chúc mừng bạn đã hoàn thành bài trắc nghiệm !
+                          Chúc mừng bạn đã hoànt hành bài thi!
                         </h3>
                         <h3>
                           Số câu đúng <strong>{kq.diem} / 20</strong>
