@@ -139,12 +139,10 @@ const ResultManage = () => {
           {" "}
           <option value="">All</option>
           {units.map((u) => (
-            <>
-              <option value={u.name} key={u.name}>
-                {" "}
-                {u.name}
-              </option>
-            </>
+            <option value={u.name} key={u.name}>
+              {" "}
+              {u.name}
+            </option>
           ))}
         </select>
         {/* {units.map((t) => (

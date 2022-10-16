@@ -5,6 +5,7 @@ import QuestionManage from "./tables/QuestionManage";
 import ResultManage from "./tables/ResultManage";
 import UnitManage from "./tables/UnitManage";
 import UserManage from "./tables/UserManage";
+import UserManageAttended from "./tables/UserManageAttended";
 
 const Admin = () => {
   const [active, setActive] = useState(6);
@@ -37,6 +38,15 @@ const Admin = () => {
             }`}
           >
             Danh sách người dùng
+          </button>
+          <button
+            type="button"
+            onClick={() => setActive(7)}
+            className={`btn me-4 ${
+              active === 7 ? "btn-primary" : "btn-outline-primary"
+            }`}
+          >
+            Danh sách tham gia
           </button>
           <button
             type="button"
@@ -82,6 +92,7 @@ const Admin = () => {
           {active === 4 && <UnitManage />}
           {active === 5 && <ExamManage />}
           {active === 6 && <ContestManage />}
+          {active === 7 && <UserManageAttended />}
         </div>
       </div>
     </div>

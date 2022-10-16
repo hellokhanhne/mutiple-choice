@@ -1,4 +1,12 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../firebase";
@@ -6,17 +14,26 @@ import { db } from "../firebase";
 import bell from "../assets/bell.png";
 import useWindowSize from "../hooks/useWindowSize";
 import "../styles/login.css";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { width } = useWindowSize();
   const Router = useNavigate();
-
+  const [checkInss, setCheckInss] = useState([]);
   const [account, setAccount] = useState("");
 
   const handleLogin = async () => {
     const q = query(collection(db, "users"), where("taikhoan", "==", account));
     const snaps = await getDocs(q);
     if (snaps.docs.length > 0) {
+      const user = snaps.docs[0];
+      if (checkInss.find((u) => u.id === user.id)) {
+        return toast.error("Tài khoản đã được đăng nhập ở một thiết bị khác !");
+      }
+      const checkInsRef = doc(db, "checkIns", user.id);
+      await setDoc(checkInsRef, {
+        ...user.data(),
+      });
       localStorage.setItem(
         "account",
         JSON.stringify({
@@ -32,6 +49,20 @@ const Login = () => {
     if (localStorage.getItem("account")) {
       Router("/");
     }
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, "checkIns"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let arr = [];
+      querySnapshot.forEach((doc) => {
+        arr.push({ ...doc.data(), id: doc.id });
+      });
+      setCheckInss(arr);
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
