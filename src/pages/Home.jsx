@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import logo from "../assets/LOGORCV.png";
 
 import CountDown from "../components/CountDown";
 import { db } from "../firebase";
@@ -180,12 +181,7 @@ const Home = () => {
             backgroundColor: "rgba(0,0,0,.3)",
           }}
         >
-          <img
-            src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
-            width={110}
-            height={110}
-            alt=""
-          />
+          <img src={logo} width={110} height={110} alt="" />
         </div>
       )}
       {localStorage.getItem("account") ? (
@@ -309,129 +305,132 @@ const Home = () => {
                         />
                       </div>
                     )}
-                    {isInContest && !loading && questionsIndex < 20 && (
-                      <>
-                        <div
-                          style={{
-                            marginTop: "1rem",
-                          }}
-                        >
-                          <CountDown
-                            results={results}
-                            handleResetCurrentId={handleResetCurrentId}
-                            setAnswer={setAnswer}
-                            setQuestionIndex={setQuestionIndex}
-                            questionsIndex={questionsIndex}
-                            answer={answer}
-                            submit={submit}
-                            setSubmit={setSubmit}
-                            account={account}
-                            currenntResultId={currenntResultId}
-                            questionId={questionExam[questionsIndex]?.id}
-                          />
-                        </div>
-                        <div
-                          className="px-3 text-white "
-                          style={{
-                            marginTop: "1rem",
-                            borderRadius: 7,
-                            backgroundColor: "#555",
-                          }}
-                        >
-                          <div className="py-2 h5">
-                            {submit.answerSubmitted && (
-                              <p className="mb-1">
-                                {" "}
-                                <b
-                                  className="text-warning"
-                                  style={{
-                                    fontSize: 18,
-                                  }}
-                                >
-                                  Đã chọn đáp án :{" "}
-                                  {kqOptions[submit.answerSubmitted]}
-                                </b>
-                              </p>
-                            )}
-                            <b
-                              style={{
-                                fontSize: 18,
-                              }}
-                            >
-                              Câu{" "}
-                              {questionsIndex +
-                                1 +
-                                "/" +
-                                questionExam?.length +
-                                " :  "}{" "}
-                              {questionExam[questionsIndex]?.cauhoi}
-                            </b>
-
-                            <div className="mt-3">
-                              <label className="options">
-                                A. {questionExam[questionsIndex]?.dapana}
-                                <input
-                                  type="radio"
-                                  checked={answer === "dapana"}
-                                  value="dapana"
-                                  onChange={(e) => {
-                                    setAnswer(e.target.value);
-                                  }}
-                                  name="dapan"
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="options">
-                                B. {questionExam[questionsIndex]?.dapanb}
-                                <input
-                                  type="radio"
-                                  checked={answer === "dapanb"}
-                                  value="dapanb"
-                                  onChange={(e) => {
-                                    setAnswer(e.target.value);
-                                  }}
-                                  name="dapan"
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="options">
-                                C. {questionExam[questionsIndex]?.dapanc}
-                                <input
-                                  type="radio"
-                                  checked={answer === "dapanc"}
-                                  value="dapanc"
-                                  onChange={(e) => {
-                                    setAnswer(e.target.value);
-                                  }}
-                                  name="dapan"
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="options">
-                                D. {questionExam[questionsIndex]?.dapand}
-                                <input
-                                  value="dapand"
-                                  type="radio"
-                                  checked={answer === "dapand"}
-                                  onChange={(e) => {
-                                    setAnswer(e.target.value);
-                                  }}
-                                  name="dapan"
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-
-                              <button
-                                onClick={handleSubmitAnswer}
-                                className="btn w-100 btn-primary mt-2"
+                    {isInContest &&
+                      !loading &&
+                      questionsIndex < 20 &&
+                      questionExam.length > 0 && (
+                        <>
+                          <div
+                            style={{
+                              marginTop: "1rem",
+                            }}
+                          >
+                            <CountDown
+                              results={results}
+                              handleResetCurrentId={handleResetCurrentId}
+                              setAnswer={setAnswer}
+                              setQuestionIndex={setQuestionIndex}
+                              questionsIndex={questionsIndex}
+                              answer={answer}
+                              submit={submit}
+                              setSubmit={setSubmit}
+                              account={account}
+                              currenntResultId={currenntResultId}
+                              questionId={questionExam[questionsIndex || 0]?.id}
+                            />
+                          </div>
+                          <div
+                            className="px-3 text-white "
+                            style={{
+                              marginTop: "1rem",
+                              borderRadius: 7,
+                              backgroundColor: "#555",
+                            }}
+                          >
+                            <div className="py-2 h5">
+                              {submit.answerSubmitted && (
+                                <p className="mb-1">
+                                  {" "}
+                                  <b
+                                    className="text-warning"
+                                    style={{
+                                      fontSize: 18,
+                                    }}
+                                  >
+                                    Đã chọn đáp án :{" "}
+                                    {kqOptions[submit.answerSubmitted]}
+                                  </b>
+                                </p>
+                              )}
+                              <b
+                                style={{
+                                  fontSize: 18,
+                                }}
                               >
-                                Xác nhận
-                              </button>
+                                Câu{" "}
+                                {questionsIndex +
+                                  1 +
+                                  "/" +
+                                  questionExam?.length +
+                                  " :  "}{" "}
+                                {questionExam[questionsIndex]?.cauhoi}
+                              </b>
+
+                              <div className="mt-3">
+                                <label className="options">
+                                  A. {questionExam[questionsIndex]?.dapana}
+                                  <input
+                                    type="radio"
+                                    checked={answer === "dapana"}
+                                    value="dapana"
+                                    onChange={(e) => {
+                                      setAnswer(e.target.value);
+                                    }}
+                                    name="dapan"
+                                  />
+                                  <span className="checkmark"> </span>
+                                </label>
+                                <label className="options">
+                                  B. {questionExam[questionsIndex]?.dapanb}
+                                  <input
+                                    type="radio"
+                                    checked={answer === "dapanb"}
+                                    value="dapanb"
+                                    onChange={(e) => {
+                                      setAnswer(e.target.value);
+                                    }}
+                                    name="dapan"
+                                  />
+                                  <span className="checkmark"></span>
+                                </label>
+                                <label className="options">
+                                  C. {questionExam[questionsIndex]?.dapanc}
+                                  <input
+                                    type="radio"
+                                    checked={answer === "dapanc"}
+                                    value="dapanc"
+                                    onChange={(e) => {
+                                      setAnswer(e.target.value);
+                                    }}
+                                    name="dapan"
+                                  />
+                                  <span className="checkmark"></span>
+                                </label>
+                                <label className="options">
+                                  D. {questionExam[questionsIndex]?.dapand}
+                                  <input
+                                    value="dapand"
+                                    type="radio"
+                                    checked={answer === "dapand"}
+                                    onChange={(e) => {
+                                      setAnswer(e.target.value);
+                                    }}
+                                    name="dapan"
+                                  />
+                                  <span className="checkmark"></span>
+                                </label>
+
+                                <button
+                                  onClick={handleSubmitAnswer}
+                                  className="btn w-100 btn-primary mt-2"
+                                >
+                                  Xác nhận
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                   </div>
                 </div>
                 {/* kq */}
