@@ -19,7 +19,7 @@ const validate = Yup.object({
       return ![undefined, null, ""].includes(val);
     }
   ),
-  email: Yup.string().required("Vui lòng nhập email người dùng !"),
+  // email: Yup.string().required("Vui lòng nhập email người dùng !"),
   taikhoan: Yup.string().required("Vui lòng nhập tài khoản người dùng !"),
 });
 
@@ -70,14 +70,14 @@ const UserForm = ({ initData, onSubmit, units }) => {
               )}
             </div>
 
-            <div className="form-group mb-3">
+            {/* <div className="form-group mb-3">
               <p className="mb-2">Email người dùng</p>
               <Input
                 type="text"
                 name="email"
                 placeholder="Nhập email người dùng"
               />
-            </div>
+            </div> */}
 
             <div className="form-group mb-3">
               <p className="mb-2">Tài khoản người dùng</p>

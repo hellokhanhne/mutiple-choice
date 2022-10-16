@@ -79,7 +79,7 @@ const UserManage = () => {
             <th>STT</th>
             <th>Tên</th>
             <th>Đơn vị</th>
-            <th>Email</th>
+            {/* <th>Email</th> */}
             <th>Tài khoản</th>
             <th>Hành động</th>
           </tr>
@@ -90,7 +90,7 @@ const UserManage = () => {
               <td>{i + 1}</td>
               <td>{d.ten}</td>
               <td>{d.donvi}</td>
-              <td>{d.email}</td>
+              {/* <td>{d.email}</td> */}
               <td>{d.taikhoan}</td>
               <td>
                 <div className="d-flex justify-content-center">
