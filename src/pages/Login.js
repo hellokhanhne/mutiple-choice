@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 
 import bell from "../assets/bell.png";
+import logo from "../assets/LOGORCV.png";
 import useWindowSize from "../hooks/useWindowSize";
 import "../styles/login.css";
 import { toast } from "react-toastify";
@@ -101,10 +102,10 @@ const Login = () => {
           >
             <div className="text-center mb-5 mt-4">
               <img
-                src={bell}
+                src={logo}
                 style={{
-                  width: "55vw",
-                  maxWidth: 250,
+                  width: "75vw",
+                  maxWidth: 340,
                 }}
                 alt=""
               />
