@@ -124,28 +124,35 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       if (!localStorage.getItem("exams")) {
-        const querySnapshot = await getDocs(collection(db, "examsQ"));
-        const queryData = querySnapshot.docs.map((d) => d.data());
-        if (queryData.length > 0) {
-          const selected =
-            queryData[Math.floor(Math.random() * (queryData.length - 1))];
+        // const querySnapshot = await getDocs(collection(db, "examsQ"));
+        // const queryData = querySnapshot.docs.map((d) => d.data());
+        // if (queryData.length > 0) {
+        // const selected =
+        //   queryData[Math.floor(Math.random() * (queryData.length - 1))];
 
-          const questions = await Promise.all(
-            selected.ids.map((id) => {
-              const ref = doc(db, "questions", id);
-              return getDoc(ref);
-            })
+        // const questions = await Promise.all(
+        //   selected.ids.map((id) => {
+        //     const ref = doc(db, "questions", id);
+        //     return getDoc(ref);
+        //   })
+        // );
+
+        const querySnapshot = await getDocs(collection(db, "questions"));
+        const questions = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        const last_data = Array.from({ length: 20 })
+          .fill(null)
+          .map(
+            () =>
+              questions[Math.floor(Math.random() * (questions.length - 1))]?.id
           );
 
-          const last_data = questions.map((q) => ({
-            ...q.data(),
-            id: q.id,
-          }));
+        localStorage.setItem("exams", JSON.stringify(last_data));
 
-          localStorage.setItem("exams", JSON.stringify(last_data));
-
-          setQuestionExam(last_data);
-        }
+        setQuestionExam(last_data);
+        // }
       }
     })();
   }, []);

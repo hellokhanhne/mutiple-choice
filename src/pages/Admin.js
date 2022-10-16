@@ -75,7 +75,7 @@ const Admin = () => {
           >
             Danh sách đơn vị
           </button>
-          <button
+          {/* <button
             type="button"
             onClick={() => setActive(5)}
             className={`btn ${
@@ -83,7 +83,7 @@ const Admin = () => {
             }`}
           >
             Danh sách đề
-          </button>
+          </button> */}
         </div>
         <div>
           {active === 1 && <UserManage />}

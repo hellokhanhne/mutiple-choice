@@ -129,7 +129,7 @@ const ExamManage = () => {
                 <div className="form-group mb-3 ms-3">
                   <button
                     type="submit"
-                    disabled
+                    // disabled
                     className="btn btn-primary   text-white"
                   >
                     Lưu số lượng đề thi
